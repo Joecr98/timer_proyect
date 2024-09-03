@@ -103,7 +103,7 @@
 			</div>
 			<button type="submit" class="btn btn-success btn-block">Guardar estación</button>
 			<?php echo form_close(); ?>
-			<a href="<?php echo base_url('welcome/verEstaciones'); ?>" class="btn btn-primary btn-block mt-3">Ver estaciones</a>
+			<a href="<?php echo base_url('welcome/verEstaciones'); ?>" class="btn btn-primary btn-block mt-3">Ver Estaciones</a>
 		</div>
 		<!-- TABLA DE DATOS -->
 		<div class="row">
