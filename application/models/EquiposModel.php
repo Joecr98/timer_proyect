@@ -18,6 +18,13 @@ class EquiposModel extends CI_Model
         return $this->db->get()->result();
     }
 
+    // Función para obtener un equipo por ID
+    public function obtenerEquipo($idEquipo)
+    {
+        $query = $this->db->get_where('equipos', array('idEquipo' => $idEquipo));
+        return $query->row(); // Devuelve una sola fila
+    }
+
     public function eliminarEquipo($idEquipo)
     {
         $this->db->where('idEquipo', $idEquipo);
