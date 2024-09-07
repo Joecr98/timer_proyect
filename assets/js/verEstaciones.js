@@ -51,16 +51,24 @@
                             clearInterval(interval);
                             running = false;
                             modeFlag = null;
+                
+                            // Reproducir sonido de alerta
+                            const alertSound = document.getElementById('alert-sound');
+                            alertSound.play();
+                
                             Swal.fire({
                                 title: `¡Tiempo finalizado en la estación ${index + 1}!`,
                                 text: 'El temporizador ha llegado a 0.',
                                 icon: 'warning',
                                 confirmButtonText: 'Aceptar'
                             });
+                
                             // Cambiar color de fondo a rojo para indicar visualmente
                             $(`.timer-display[data-index="${index}"]`).css('background-color', 'red');
                             $(`.hours-input[data-index="${index}"], .minutes-input[data-index="${index}"], .time-controls button[data-index="${index}"], .btn-load-time[data-index="${index}"]`).prop('disabled', false).addClass('inactiva');
-                            localStorage.removeItem(timerKey); // Eliminar del localStorage
+                            
+                            // Eliminar del localStorage
+                            localStorage.removeItem(timerKey); 
                             return;
                         }
                         totalTime--;
@@ -72,7 +80,7 @@
                     }, 1000);
                     running = true;
                     saveTimer();
-                }
+                }              
 
                 function startCountUp() {
                     if ($(`.timer-display[data-index="${index}"]`).css('background-color') === 'rgb(255, 0, 0)') {

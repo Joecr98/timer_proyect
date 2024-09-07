@@ -60,6 +60,9 @@
             <?php endforeach; ?>
         </div>
     </div>
+
+    <audio id="alert-sound" src="<?= base_url('assets/audio/sound_alert.mp3') ?>"></audio>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
