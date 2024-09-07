@@ -7,73 +7,8 @@
 	<title>Inicio</title>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous">
-	<style>
-		body {
-			background-color: #121212;
-			color: #ffffff;
-		}
-
-		.container {
-			margin-top: 50px;
-		}
-
-		.card {
-			background-color: #1e1e1e;
-			border: none;
-		}
-
-		.card-header {
-			background-color: #2c2c2c;
-			border-bottom: 1px solid #444;
-		}
-
-		.card-body {
-			background-color: #1e1e1e;
-		}
-
-		.table {
-			color: #ffffff;
-		}
-
-		.table thead {
-			background-color: #333333;
-		}
-
-		.table tbody tr {
-			background-color: #2a2a2a;
-		}
-
-		.btn {
-			border: none;
-		}
-
-		.btn-success {
-			background-color: #28a745;
-		}
-
-		.btn-primary {
-			background-color: #007bff;
-		}
-
-		.btn-warning {
-			background-color: #ffc107;
-			color: #000;
-		}
-
-		.btn-danger {
-			background-color: #dc3545;
-		}
-
-		.form-control {
-			background-color: #2c2c2c;
-			color: #ffffff;
-			border: 1px solid #444;
-		}
-
-		.form-control::placeholder {
-			color: #888888;
-		}
-	</style>
+	<link rel="stylesheet" href="<?= base_url('assets/css/globalEstilos.css') ?>">
+	<link rel="stylesheet" href="<?= base_url('assets/css/listaEstaciones.css') ?>">
 </head>
 
 <body>
