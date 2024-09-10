@@ -8,8 +8,9 @@
                     totalTime = 0;
                 let interval;
                 let running = false;
-                let paused = false; // Nueva variable para rastrear si está en pausa
+                let paused = false;
                 let modeFlag = null; // 'addedTime' para tiempo añadido, 'freeTime' para tiempo libre
+                let idHistorial = null; // Nueva variable para el ID del historial
                 const timerKey = `timer_${index}`;
 
                 function updateDisplay() {
@@ -19,17 +20,48 @@
                 }
 
                 function resetTimer() {
+                    // Si no existe el ID del historial, ejecutar el comportamiento por defecto
+                    if (!idHistorial) {
+                        console.warn('No se ha iniciado el tiempo. ID del historial no disponible, ejecutando reset por defecto.');
+                        
+                        // Código de restablecimiento por defecto
+                        updateDisplay();
+                        localStorage.removeItem(timerKey); // Eliminar del localStorage
+                        $(`.btn-add-time[data-index="${index}"], .btn-free-time[data-index="${index}"]`).prop('disabled', false);
+                        $(`.hours-input[data-index="${index}"], .minutes-input[data-index="${index}"], .time-controls button[data-index="${index}"], .btn-load-time[data-index="${index}"]`).prop('disabled', false).removeClass('inactiva');
+                        $(`.timer-display[data-index="${index}"]`).css('background-color', ''); // Restaurar color original
+                        
+                        return; // Terminar ejecución ya que no hay más que hacer
+                    }
+                
+                    // Si existe el ID del historial, detener el tiempo a través de una solicitud POST
+                    axios.post('detenerTiempo', {
+                        idHistorial: idHistorial
+                    })
+                    .then(response => {
+                        const data = response.data;
+                        if (data.status === 'success') {
+                            console.log('Tiempo detenido exitosamente.');
+                            localStorage.removeItem('idHistorial'); // Limpiar el ID del historial de localStorage si ya no es necesario
+                        } else {
+                            console.error('Error al detener el tiempo:', data.message);
+                        }
+                    })
+                    .catch(error => console.error('Error al detener el tiempo:', error));
                     clearInterval(interval);
                     hour = min = sec = totalTime = 0;
                     running = false;
-                    paused = false; // Reiniciar estado de pausa
+                    paused = false;
                     modeFlag = null;
+                    idHistorial = null;
+                    // Comportamiento de restablecimiento por defecto, se ejecuta independientemente de la solicitud
                     updateDisplay();
-                    localStorage.removeItem(timerKey); // Eliminar del localStorage
+                    localStorage.removeItem(timerKey);
                     $(`.btn-add-time[data-index="${index}"], .btn-free-time[data-index="${index}"]`).prop('disabled', false);
                     $(`.hours-input[data-index="${index}"], .minutes-input[data-index="${index}"], .time-controls button[data-index="${index}"], .btn-load-time[data-index="${index}"]`).prop('disabled', false).removeClass('inactiva');
                     $(`.timer-display[data-index="${index}"]`).css('background-color', ''); // Restaurar color original
                 }
+                
 
                 function saveTimer() {
                     localStorage.setItem(timerKey, JSON.stringify({
@@ -37,15 +69,46 @@
                         min: min,
                         sec: sec,
                         running: running,
-                        paused: paused, // Guardar estado de pausa
+                        paused: paused,
                         modeFlag: modeFlag,
-                        totalTime: totalTime
+                        totalTime: totalTime,
+                        idHistorial: idHistorial // Guardar idHistorial
                     }));
                 }
 
-                function startCountdown() {
+                function startCountdown(idEquipo) {
+                    if (totalTime <= 0) {
+                        console.error('No hay tiempo para iniciar el temporizador.');
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'No hay tiempo disponible para iniciar el temporizador.',
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar'
+                        });
+                        return; // Salir de la función si no hay tiempo
+                    }
+                
+                    if (!running && !paused) {
+                        axios.post('iniciarTiempo', {
+                            idEquipo: idEquipo
+                        })
+                        .then(response => {
+                            const data = response.data;
+                            if (data.idHistorial) {
+                                idHistorial = data.idHistorial; // Guardar el ID del historial en la variable
+                                saveTimer(); // Llamar a saveTimer para guardar el estado en localStorage
+                                console.log('Tiempo iniciado. ID del historial guardado en localStorage:', data.idHistorial);
+                            } else {
+                                console.error('No se recibió el ID del historial.');
+                            }
+                        })
+                        .catch(error => console.error('Error al iniciar el tiempo:', error));
+                    }
+                
                     modeFlag = 'addedTime';
-                    paused = false;
+                    paused = false; // Desactivar estado de pausa
+                    let finalized = false; // Nueva bandera para controlar la finalización
+                
                     interval = setInterval(function() {
                         if (totalTime <= 0) {
                             clearInterval(interval);
@@ -66,11 +129,30 @@
                             // Cambiar color de fondo a rojo para indicar visualmente
                             $(`.timer-display[data-index="${index}"]`).css('background-color', 'red');
                             $(`.hours-input[data-index="${index}"], .minutes-input[data-index="${index}"], .time-controls button[data-index="${index}"], .btn-load-time[data-index="${index}"]`).prop('disabled', false).addClass('inactiva');
-                            
-                            // Eliminar del localStorage
-                            localStorage.removeItem(timerKey); 
+                
+                            // Enviar información de finalización solo si no se ha hecho antes
+                            if (!finalized) {
+                                axios.post('detenerTiempo', {
+                                    idHistorial: idHistorial
+                                })
+                                .then(response => {
+                                    const data = response.data;
+                                    if (data.status === 'success') {
+                                        console.log('Tiempo detenido exitosamente.');
+                                        finalized = true; // Marcar como finalizado
+                                        localStorage.removeItem('idHistorial'); // Limpiar el ID del historial de localStorage si ya no es necesario
+                                    } else {
+                                        console.error('Error al detener el tiempo:', data.message);
+                                    }
+                                })
+                                .catch(error => console.error('Error al detener el tiempo:', error));
+                            }
+                
+                            idHistorial = null;
+                            localStorage.removeItem(timerKey);
                             return;
                         }
+                
                         totalTime--;
                         hour = Math.floor(totalTime / 3600);
                         min = Math.floor((totalTime % 3600) / 60);
@@ -78,11 +160,14 @@
                         updateDisplay();
                         saveTimer();
                     }, 1000);
+                
                     running = true;
                     saveTimer();
-                }              
+                }
+                
+                            
 
-                function startCountUp() {
+                function startCountUp(idEquipo) {
                     if ($(`.timer-display[data-index="${index}"]`).css('background-color') === 'rgb(255, 0, 0)') {
                         $(`.timer-display[data-index="${index}"]`).css('background-color', '');
                     }
@@ -90,6 +175,20 @@
                     if (!running && !paused) {
                         hour = min = sec = 0; // Reiniciar a 0 solo cuando empieza por primera vez
                         updateDisplay();
+                        axios.post('iniciarTiempo', {
+                            idEquipo: idEquipo
+                        })
+                        .then(response => {
+                            const data = response.data;
+                            if (data.idHistorial) {
+                                idHistorial = data.idHistorial; // Guardar el ID del historial en la variable
+                                saveTimer(); // Llamar a saveTimer para guardar el estado en localStorage
+                                console.log('Tiempo iniciado. ID del historial guardado en localStorage:', data.idHistorial);
+                            } else {
+                                console.error('No se recibió el ID del historial.');
+                            }
+                        })
+                        .catch(error => console.error('Error al iniciar el tiempo:', error));
                     }
 
                     paused = false; // Desactivar estado de pausa
@@ -120,8 +219,9 @@
                         min = savedTimer.min;
                         sec = savedTimer.sec;
                         running = savedTimer.running;
-                        paused = savedTimer.paused; // Recuperar estado de pausa
+                        paused = savedTimer.paused;
                         modeFlag = savedTimer.modeFlag;
+                        idHistorial = savedTimer.idHistorial;
                         updateDisplay();
 
                         if (running) {
@@ -149,15 +249,19 @@
                 }
 
                 $(`.btn-add-time[data-index="${index}"]`).on('click', function() {
+                    const index = $(this).data('index'); // Obtener el índice del botón clickeado
+                    const idEquipo = $(`.station[data-index="${index}"]`).data('id'); // Obtener el idEquipo asociado a este índice
                     if (!running) {
-                        startCountdown();
+                        startCountdown(idEquipo);
                         inhabilitarBotonesTemporizador();
                     }
                 });
 
                 $(`.btn-free-time[data-index="${index}"]`).on('click', function() {
+                    const index = $(this).data('index'); // Obtener el índice del botón clickeado
+                    const idEquipo = $(`.station[data-index="${index}"]`).data('id'); // Obtener el idEquipo asociado a este índice
                     if (!running) {
-                        startCountUp();
+                        startCountUp(idEquipo);
                         inhabilitarBotonesCronometro();
                     }
                 });
