@@ -24,13 +24,19 @@
                     if (!idHistorial) {
                         console.warn('No se ha iniciado el tiempo. ID del historial no disponible, ejecutando reset por defecto.');
                         
-                        // Código de restablecimiento por defecto
+                        clearInterval(interval);
+                        hour = min = sec = totalTime = 0;
+                        running = false;
+                        paused = false;
+                        modeFlag = null;
+                        idHistorial = null;
                         updateDisplay();
-                        localStorage.removeItem(timerKey); // Eliminar del localStorage
+                        localStorage.removeItem(timerKey);
                         $(`.btn-add-time[data-index="${index}"], .btn-free-time[data-index="${index}"]`).prop('disabled', false);
                         $(`.hours-input[data-index="${index}"], .minutes-input[data-index="${index}"], .time-controls button[data-index="${index}"], .btn-load-time[data-index="${index}"]`).prop('disabled', false).removeClass('inactiva');
                         $(`.timer-display[data-index="${index}"]`).css('background-color', ''); // Restaurar color original
                         
+                        console.log('Temporizador reiniciado (sin ID de historial)');
                         return; // Terminar ejecución ya que no hay más que hacer
                     }
                 
@@ -48,18 +54,20 @@
                         }
                     })
                     .catch(error => console.error('Error al detener el tiempo:', error));
+                
                     clearInterval(interval);
                     hour = min = sec = totalTime = 0;
                     running = false;
                     paused = false;
                     modeFlag = null;
                     idHistorial = null;
-                    // Comportamiento de restablecimiento por defecto, se ejecuta independientemente de la solicitud
                     updateDisplay();
                     localStorage.removeItem(timerKey);
                     $(`.btn-add-time[data-index="${index}"], .btn-free-time[data-index="${index}"]`).prop('disabled', false);
                     $(`.hours-input[data-index="${index}"], .minutes-input[data-index="${index}"], .time-controls button[data-index="${index}"], .btn-load-time[data-index="${index}"]`).prop('disabled', false).removeClass('inactiva');
                     $(`.timer-display[data-index="${index}"]`).css('background-color', ''); // Restaurar color original
+                    
+                    console.log('Temporizador reiniciado (con ID de historial)');
                 }
                 
 

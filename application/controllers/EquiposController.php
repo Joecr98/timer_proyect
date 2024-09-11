@@ -37,9 +37,15 @@ class EquiposController extends CI_Controller
 			'descripcion' => $this->input->post('descripcion'),
 			'estado' => $this->input->post('estado')
 		];
-		$this->EquiposModel->crearEquipo($equipo);
-		$this->session->set_flashdata('equipo_creado', true);
-		redirect('EquiposController/crearEstacion');
+
+		// Intenta crear el equipo
+		if ($this->EquiposModel->crearEquipo($equipo)) {
+			$this->session->set_flashdata('equipo_creado', true);
+			redirect('EquiposController/crearEstacion');
+		} else {
+			$this->session->set_flashdata('error_equipo', 'El nombre del equipo ya existe.');
+			redirect('EquiposController/crearEstacion');
+		}
 	}
 
 	public function actualizarEstacion($idEquipo)
@@ -75,8 +81,11 @@ class EquiposController extends CI_Controller
 	public function listarHistorial()
 	{
 		$datosHistoriales['historiales'] = $this->EquiposModel->mostrarHistorial();
-		$this->load->view('historial', $datosHistoriales);
+		$datosEquipos['equipos'] = $this->EquiposModel->mostrarEquipos(); // Obtener los nombres de equipos
+		$this->load->view('historial', array_merge($datosHistoriales, $datosEquipos)); // Enviar ambos arrays a la vista
 	}
+
+
 
 	public function iniciarTiempo()
 	{
@@ -126,5 +135,17 @@ class EquiposController extends CI_Controller
 		} else {
 			echo json_encode(array('status' => 'error', 'message' => 'ID del historial no proporcionado.'));
 		}
+	}
+
+	public function obtenerEstadisticas()
+	{
+		$estacionMasRegistros = $this->EquiposModel->estacionConMasRegistros();
+		$estacionMenosUsada = $this->EquiposModel->estacionMenosUsada();
+
+		$data = [
+			'estacionMasRegistros' => $estacionMasRegistros ? $estacionMasRegistros : (object) ['nombreEstacion' => 'Desconocida', 'cantidad' => 0],
+			'estacionMenosUsada' => $estacionMenosUsada ? $estacionMenosUsada : (object) ['nombreEstacion' => 'Desconocida', 'cantidad' => 0]
+		];
+		echo json_encode($data);
 	}
 }

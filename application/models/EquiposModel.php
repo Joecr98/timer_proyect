@@ -6,10 +6,23 @@ class EquiposModel extends CI_Model
         parent::__construct();
     }
 
+    public function existeNombre($nombre)
+    {
+        $this->db->where('nombre', $nombre);
+        $query = $this->db->get('equipos');
+        return $query->num_rows() > 0;
+    }
+
     public function crearEquipo($equipo)
     {
-        $this->db->insert('equipos', $equipo);
+        // Verifica si el nombre ya existe
+        if (!$this->existeNombre($equipo['nombre'])) {
+            $this->db->insert('equipos', $equipo);
+            return true; // Indica que se insertó correctamente
+        }
+        return false; // Indica que el nombre ya existe
     }
+
 
     public function mostrarEquipos()
     {
@@ -72,5 +85,29 @@ class EquiposModel extends CI_Model
 
         $this->db->where('idHistorial', $idHistorial);
         $this->db->update('historial', $data);
+    }
+
+    public function estacionConMasRegistros()
+    {
+        $this->db->select('e.nombre, COUNT(*) as cantidad');
+        $this->db->from('historial h');
+        $this->db->join('equipos e', 'e.idEquipo = h.idEquipoHistorial'); // Realiza la unión con la tabla equipos
+        $this->db->group_by('e.nombre');
+        $this->db->order_by('cantidad', 'DESC');
+        $this->db->limit(1);
+        $query = $this->db->get();
+        return $query->row();
+    }
+
+    public function estacionMenosUsada()
+    {
+        $this->db->select('e.nombre, COUNT(*) as cantidad');
+        $this->db->from('historial h');
+        $this->db->join('equipos e', 'e.idEquipo = h.idEquipoHistorial'); // Realiza la unión con la tabla equipos
+        $this->db->group_by('e.nombre');
+        $this->db->order_by('cantidad', 'ASC');
+        $this->db->limit(1);
+        $query = $this->db->get();
+        return $query->row();
     }
 }
