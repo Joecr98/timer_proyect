@@ -14,8 +14,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="fas fa-cog"></i> Configuración
+                <a class="nav-link" href="<?php echo base_url('EquiposController/listarHistorial'); ?>">
+                    <i class="fas fa-history"></i> Historial
                 </a>
             </li>
             <!-- Agrega más enlaces aquí según sea necesario -->
