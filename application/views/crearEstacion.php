@@ -21,7 +21,7 @@
             <div class="row">
                 <div class="form-group col-sm-4">
                     <label for="">Nombre</label>
-                    <input type="text" name="nombre" class="form-control" required placeholder="Nombre" id="nombre">
+                    <input type="text" name="nombre" class="form-control" value="<?= set_value('nombre'); ?>" value="<?= set_value('descripcion'); ?>" required placeholder="Nombre" id="nombre">
                 </div>
                 <div class="form-group col-sm-4">
                     <label for="">Descripción</label>
@@ -30,8 +30,8 @@
                 <div class="form-group col-sm-4">
                     <label for="estado">Estado</label>
                     <select name="estado" class="form-control" required id="estado">
-                        <option value="1">Activa</option>
-                        <option value="0">Inactiva</option>
+                        <option value="1" <?= set_select('estado', '1'); ?>>Activa</option>
+                        <option value="0" <?= set_select('estado', '0'); ?>>Inactiva</option>
                     </select>
                 </div>
             </div>
@@ -51,8 +51,21 @@
                 text: '¡Estación creada con éxito!',
                 confirmButtonColor: '#28a745'
             });
+        <?php elseif ($this->session->flashdata('error_equipo')): ?>
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: '<?= $this->session->flashdata('error_equipo'); ?>',
+                confirmButtonColor: '#d33'
+            }).then(() => {
+                // Borrar el valor del input nombre
+                document.getElementById('nombre').value = '';
+                // Colocar el puntero en el input nombre
+                document.getElementById('nombre').focus();
+            });
         <?php endif; ?>
     </script>
+
 </body>
 
 </html>
