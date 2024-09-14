@@ -28,6 +28,15 @@ class EquiposModel extends CI_Model
     {
         $this->db->select('*');
         $this->db->from('equipos');
+        $this->db->where('estado', '1');
+        return $this->db->get()->result();
+    }
+
+    public function mostrarEquiposInactivos()
+    {
+        $this->db->select('*');
+        $this->db->from('equipos');
+        $this->db->where('estado', '0');
         return $this->db->get()->result();
     }
 
