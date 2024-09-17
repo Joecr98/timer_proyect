@@ -15,7 +15,8 @@
 	<?php $this->load->view('barraNavegacion'); ?>
 	<div class="container">
 		<div class="row mb-3">
-			<a href="<?php echo base_url('EquiposController/crearEstacion'); ?>" class="btn btn-success">Crear Estación</a>
+			<a href="<?php echo base_url('EquiposController/crearEstacion'); ?>" class="btn btn-success mr-3">Crear Estación</a>
+			<a href="<?php echo base_url('EquiposController/listarEstacionesInactivas'); ?>" class="btn btn-primary">Ver estaciones inactivas</a>
 		</div>
 		<div class="row">
 			<div class="card col-12">
@@ -31,7 +32,6 @@
 								<th scope="col">Descripción</th>
 								<th scope="col">Estado</th>
 								<th scope="col">Editar</th>
-								<th scope="col">Eliminar</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -44,8 +44,7 @@
                                         <td>' . $equipo->nombre . '</td>
                                         <td>' . $equipo->descripcion . '</td>
                                         <td>' . ($equipo->estado == 1 ? 'Activa' : 'Inactiva') . '</td>
-                                        <td><a href="' . base_url('EquiposController/actualizarEstacion/' . $equipo->idEquipo) . '" class="btn btn-warning text-white">Editar</a></td>
-                                        <td><button type="button" class="btn btn-danger" onclick="confirmarEliminacion(`' . base_url('EquiposController/eliminarEquipo/' . $equipo->idEquipo) . '`)">Eliminar</button></td>
+                                        <td><a href="' . base_url('EquiposController/actualizarEstacion/' . $equipo->idEquipo) . '" class="btn btn-danger text-white">Editar</a></td>
                                     </tr>
                                 ';
 							}
@@ -62,25 +61,6 @@
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"></script>
 	<!-- SweetAlert2 -->
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-	<script>
-		function confirmarEliminacion(url) {
-			Swal.fire({
-				title: '¿Estás seguro?',
-				text: "Esta acción eliminará la estación.",
-				icon: 'warning',
-				showCancelButton: true,
-				confirmButtonColor: '#dc3545',
-				cancelButtonColor: '#6c757d',
-				confirmButtonText: 'Sí, eliminar',
-				cancelButtonText: 'Cancelar'
-			}).then((result) => {
-				if (result.isConfirmed) {
-					window.location.href = url;
-				}
-			});
-		}
-	</script>
 </body>
 
 </html>

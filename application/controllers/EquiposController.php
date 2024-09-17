@@ -78,6 +78,12 @@ class EquiposController extends CI_Controller
 		$this->load->view('listaEstaciones', $datosEquipos);
 	}
 
+	public function listarEstacionesInactivas()
+	{
+		$datosEquipos['equipos'] = $this->EquiposModel->mostrarEquiposInactivos();
+		$this->load->view('listaEstacionesInactivas', $datosEquipos);
+	}
+
 	public function listarHistorial()
 	{
 		$datosHistoriales['historiales'] = $this->EquiposModel->mostrarHistorial();
