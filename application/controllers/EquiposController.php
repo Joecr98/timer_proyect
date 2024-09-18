@@ -17,6 +17,10 @@ class EquiposController extends CI_Controller
 		$this->load->helper('form');
 		$this->load->model('EquiposModel');
 		$this->load->library('session'); // Carga la librería de sesión
+
+		if (!$this->session->userdata('logged_in')) {
+            redirect('login');
+        }
 	}
 
 	public function index()
@@ -84,7 +88,23 @@ class EquiposController extends CI_Controller
 		$datosEquipos['equipos'] = $this->EquiposModel->mostrarEquipos(); // Obtener los nombres de equipos
 		$this->load->view('historial', array_merge($datosHistoriales, $datosEquipos)); // Enviar ambos arrays a la vista
 	}
-
+	
+	public function iniciarHistorial($idEquipo, $inicioTiempo, $finalTiempo, $idUsuario)
+	{
+		$data = array(
+			'inicioEquipoHistorial' => $inicioTiempo,
+			'finEquipoHistorial' => $finalTiempo,
+			'idEquipoHistorial' => $idEquipo,
+			'idUsuario' => $idUsuario
+		);
+	
+		if (!$this->db->insert('historial', $data)) {
+			$error = $this->db->error();
+			throw new Exception('Error de base de datos: ' . $error['message']);
+		}
+	
+		return $this->db->insert_id();
+	}
 
 
 	public function iniciarTiempo()
