@@ -49,10 +49,25 @@ defined('BASEPATH') or exit('No direct script access allowed');
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
-$route['default_controller'] = 'EquiposController';
+$route['default_controller'] = 'UsuariosController';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
 $route['iniciarTiempo'] = 'EquiposController/iniciarTiempo';
 $route['detenerTiempo'] = 'EquiposController/detenerTiempo';
 $route['obtenerEstadisticas'] = 'EquiposController/obtenerEstadisticas';
+
+// Nuevas rutas para la gestión de usuarios
+$route['login'] = 'UsuariosController/login';
+$route['crearUsuario'] = 'UsuariosController/crearUsuario';
+
+
+// Rutas para equipos (asumiendo que quieres mantener estas funcionalidades)
+$route['equipos'] = 'EquiposController/index';
+
+
+// Ruta para el historial
+$route['historial'] = 'EquiposController/listarHistorial';
+
+// Ruta para el dashboard (asumiendo que quieres crear una página de inicio después del login)
+$route['dashboard'] = 'DashboardController/index';
