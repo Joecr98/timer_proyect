@@ -25,7 +25,7 @@ class EquiposController extends CI_Controller
 	public function index()
 	{
 		// obtiene datos del clima de la ciudad especificada
-		$data['weather'] = $this->WeatherModel->get_weather('Guatemala');
+		$data['weather'] = $this->WeatherModel->get_weather('14.2719', '-89.8791');
 
 		$data['equipos'] = $this->EquiposModel->mostrarEquipos();
 		$this->load->view('verEstaciones', $data);
