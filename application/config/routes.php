@@ -56,3 +56,4 @@ $route['translate_uri_dashes'] = FALSE;
 $route['iniciarTiempo'] = 'EquiposController/iniciarTiempo';
 $route['detenerTiempo'] = 'EquiposController/detenerTiempo';
 $route['obtenerEstadisticas'] = 'EquiposController/obtenerEstadisticas';
+$route['obtenerNotificaciones'] = 'EquiposController/obtenerNotificaciones';

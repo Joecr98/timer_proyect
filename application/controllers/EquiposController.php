@@ -16,7 +16,7 @@ class EquiposController extends CI_Controller
 		parent::__construct();
 		$this->load->helper('form');
 		$this->load->model('EquiposModel');
-		$this->load->library('session'); // Carga la librería de sesión
+		$this->load->library('session');
 	}
 
 	public function index()
@@ -54,12 +54,6 @@ class EquiposController extends CI_Controller
 		$this->load->view('actualizarEstacion', $datoEquipo);
 	}
 
-	public function eliminarEquipo($idEquipo)
-	{
-		$this->EquiposModel->eliminarEquipo($idEquipo);
-		redirect('EquiposController/listarEstaciones');
-	}
-
 	public function editarEquipo($idEquipo)
 	{
 		$equipo = [
@@ -72,11 +66,19 @@ class EquiposController extends CI_Controller
 		redirect('EquiposController/listarEstaciones');
 	}
 
+	public function eliminarEquipo($idEquipo)
+	{
+		$this->EquiposModel->eliminarEquipo($idEquipo);
+		redirect('EquiposController/listarEstaciones');
+	}
+
+
 	public function listarEstaciones()
 	{
 		$datosEquipos['equipos'] = $this->EquiposModel->mostrarEquipos();
 		$this->load->view('listaEstaciones', $datosEquipos);
 	}
+
 
 	public function listarHistorial()
 	{
@@ -84,8 +86,6 @@ class EquiposController extends CI_Controller
 		$datosEquipos['equipos'] = $this->EquiposModel->mostrarEquipos(); // Obtener los nombres de equipos
 		$this->load->view('historial', array_merge($datosHistoriales, $datosEquipos)); // Enviar ambos arrays a la vista
 	}
-
-
 
 	public function iniciarTiempo()
 	{
@@ -147,5 +147,99 @@ class EquiposController extends CI_Controller
 			'estacionMenosUsada' => $estacionMenosUsada ? $estacionMenosUsada : (object) ['nombreEstacion' => 'Desconocida', 'cantidad' => 0]
 		];
 		echo json_encode($data);
+	}
+
+	public function listarNotificaciones()
+	{
+		$datosNotificaciones['notificaciones'] = $this->EquiposModel->mostrarNotificaciones();
+		$datosEquipos['equipos'] = $this->EquiposModel->mostrarEquipos(); // Obtener los nombres de equipos
+		$this->load->view('listaNotificaciones', array_merge($datosNotificaciones, $datosEquipos)); // Enviar ambos arrays a la vista;
+	}
+
+	public function obtenerNotificaciones()
+	{
+		$notificaciones = $this->EquiposModel->obtenerNotificaciones(); // Supongamos que devuelve un array de notificaciones
+		echo json_encode($notificaciones);
+	}
+
+	public function cargarVistaCrearNotificaciones()
+	{
+		$datosEquipos['equipos'] = $this->EquiposModel->mostrarEquipos(); // Obtener los nombres de equipos
+		$this->load->view('crearNotificacion', $datosEquipos);
+	}
+
+	public function crearNotificacion()
+	{
+		$notificacion = [
+			'nombreNotificacion' => $this->input->post('name'),
+			'iconoNotificacion' => trim($this->input->post('icon')) ?: null,
+			'tituloNotificacion' => trim($this->input->post('title')) ?: null,
+			'textoNotificacion' => trim($this->input->post('text')) ?: null,
+			'colorBotonNotificacion' => $this->input->post('colorButton'),
+			'idEquipoNotificacion' => trim($this->input->post('estacionFilter')) ?: null,
+			'tiempoConfiguradoNotificacion' => $this->input->post('configureTime'),
+			'imagenUrlNotificacion' => trim($this->input->post('imageUrl')) ?: null,
+			'anchoImagenNotificacion' => trim($this->input->post('imageWidth')) ?: null,
+			'largoImagenNotificacion' => trim($this->input->post('imageHeight')) ?: null,
+			'nombreAlternoImagenNotificacion' => trim($this->input->post('altName')) ?: null,
+			'imagenUrlBackgroundNotificacion' => trim($this->input->post('BackgroundImageUrl')) ?: null,
+			'colorBackgroundNotificacion' => $this->input->post('BackgroundColor'),
+			'colorBackdropNotificacion' => $this->input->post('BackdropColor'),
+		];
+
+		// Intenta crear la notificación
+		if ($this->EquiposModel->crearNotificacion($notificacion)) {
+			$this->session->set_flashdata('notificacion_creada', true);
+			redirect('EquiposController/cargarVistaCrearNotificaciones');
+		} else {
+			$this->session->set_flashdata('error_notificacion', true);
+			redirect('EquiposController/cargarVistaCrearNotificaciones');
+		}
+	}
+
+	public function vistaActualizarNotificacion($idNotificacion)
+	{
+		$datoNotificacion['notificacion'] = $this->EquiposModel->obtenerNotificacionbyId($idNotificacion);
+		$datosEquipos['equipos'] = $this->EquiposModel->mostrarEquipos(); // Obtener los nombres de equipos
+		$this->load->view('actualizarNotificacion', array_merge($datoNotificacion, $datosEquipos));
+	}
+
+	public function editarNotificacion($idNotificacion)
+	{
+		$notificacion = [
+			'nombreNotificacion' => $this->input->post('name'),
+			'iconoNotificacion' => trim($this->input->post('icon')) ?: null,
+			'tituloNotificacion' => trim($this->input->post('title')) ?: null,
+			'textoNotificacion' => trim($this->input->post('text')) ?: null,
+			'colorBotonNotificacion' => $this->input->post('colorButton'),
+			'idEquipoNotificacion' => trim($this->input->post('estacionFilter')) ?: null,
+			'tiempoConfiguradoNotificacion' => $this->input->post('configureTime'),
+			'imagenUrlNotificacion' => trim($this->input->post('imageUrl')) ?: null,
+			'anchoImagenNotificacion' => trim($this->input->post('imageWidth')) ?: null,
+			'largoImagenNotificacion' => trim($this->input->post('imageHeight')) ?: null,
+			'nombreAlternoImagenNotificacion' => trim($this->input->post('altName')) ?: null,
+			'imagenUrlBackgroundNotificacion' => trim($this->input->post('BackgroundImageUrl')) ?: null,
+			'colorBackgroundNotificacion' => $this->input->post('BackgroundColor'),
+			'colorBackdropNotificacion' => $this->input->post('BackdropColor'),
+		];
+
+		if ($this->EquiposModel->editarNotificacion($notificacion, $idNotificacion)) {
+			$this->session->set_flashdata('notificacion_actualizada', true);
+			redirect('EquiposController/listarNotificaciones');
+		} else {
+			$this->session->set_flashdata('error_actualizarNotificacion', true);
+			redirect('EquiposController/vistaActualizarNotificacion/' . $idNotificacion);
+		}
+	}
+
+	public function eliminarNotificacion($idNotificacion)
+	{
+		if ($this->EquiposModel->eliminarNotificacion($idNotificacion)) {
+			$this->session->set_flashdata('notificacion_eliminada', true);
+			redirect('EquiposController/listarNotificaciones');
+		} else {
+			$this->session->set_flashdata('error_eliminarNotificacion', true);
+			redirect('EquiposController/listarNotificaciones');
+		}
 	}
 }
