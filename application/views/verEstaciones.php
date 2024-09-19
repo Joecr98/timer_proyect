@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous">
     <link rel="stylesheet" href="<?= base_url('assets/css/globalEstilos.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/verEstaciones.css') ?>">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@40,400,0,0" />
 </head>
 
 <body>
@@ -29,9 +30,10 @@
                             <!-- Mostrar el clima -->
                             <?php if (isset($weather)): ?>
                                 <div>
-                                    <h3>Clima actual</h3>
+                                    <span class="material-symbols-outlined">partly_cloudy_day</span>
                                     <p>Temperatura: <?php echo $weather['main']['temp']; ?>°C</p>
                                     <p>Condiciones: <?php echo $weather['weather'][0]['description']; ?></p>
+                                    <span class="material-symbols-outlined">horizontal_rule</span>
                                 </div>
                             <?php endif; ?>
 
