@@ -21,11 +21,11 @@
             <div class="row">
                 <div class="form-group col-sm-4">
                     <label for="">Nombre</label>
-                    <input type="text" name="nombre" class="form-control" value="<?= set_value('nombre'); ?>" value="<?= set_value('descripcion'); ?>" required placeholder="Nombre" id="nombre">
+                    <input type="text" name="nombre" class="form-control" value="<?= set_value('nombre'); ?>" required placeholder="Nombre" id="nombre">
                 </div>
                 <div class="form-group col-sm-4">
                     <label for="">Descripción</label>
-                    <input type="text" name="descripcion" class="form-control" required placeholder="Descripción" id="descripcion">
+                    <input type="text" name="descripcion" class="form-control" value="<?= set_value('descripcion'); ?>" required placeholder="Descripción" id="descripcion">
                 </div>
                 <div class="form-group col-sm-4">
                     <label for="estado">Estado</label>

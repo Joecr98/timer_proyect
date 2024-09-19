@@ -9,6 +9,11 @@
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mx-auto">
             <li class="nav-item">
+                <a class="nav-link" href="<?php echo base_url('EquiposController/listarNotificaciones'); ?>">
+                    <i class="fas fa-bell"></i> Notificaciones personalizadas
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="<?php echo base_url('EquiposController/listarEstaciones'); ?>">
                     <i class="fas fa-list"></i> Lista de Equipos
                 </a>
