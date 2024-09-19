@@ -16,11 +16,16 @@ class EquiposController extends CI_Controller
 		parent::__construct();
 		$this->load->helper('form');
 		$this->load->model('EquiposModel');
+		$this->load->model('WeatherModel'); // Carga modelo de clima
 		$this->load->library('session'); // Carga la librería de sesión
+
 	}
 
 	public function index()
 	{
+		// obtiene datos del clima de la ciudad especificada
+		$data['weather'] = $this->WeatherModel->get_weather('Guatemala');
+
 		$data['equipos'] = $this->EquiposModel->mostrarEquipos();
 		$this->load->view('verEstaciones', $data);
 	}
@@ -154,4 +159,5 @@ class EquiposController extends CI_Controller
 		];
 		echo json_encode($data);
 	}
+
 }

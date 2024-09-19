@@ -26,6 +26,15 @@
                                     <?php echo $equipo->estado == 1 ? 'activa' : 'inactiva'; ?>
                                 </span></p>
 
+                            <!-- Mostrar el clima -->
+                            <?php if (isset($weather)): ?>
+                                <div class="weather-info">
+                                    <p><strong>Clima actual en Madrid:</strong></p>
+                                    <p>Temperatura: <?php echo $weather['main']['temp']; ?>°C</p>
+                                    <p>Condición: <?php echo $weather['weather'][0]['description']; ?></p>
+                                </div>
+                            <?php endif; ?>
+
                             <div class="btn-group d-flex justify-content-center">
                                 <button class="btn btn-add-time btn-sm" data-action="add-time" data-index="<?php echo $index; ?>">Iniciar tiempo añadido</button>
                                 <button class="btn btn-free-time btn-sm" data-action="free-time" data-index="<?php echo $index; ?>">Iniciar tiempo libre</button>
