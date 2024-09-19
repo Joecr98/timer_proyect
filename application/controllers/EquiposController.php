@@ -3,6 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @property EquiposModel $EquiposModel
+ * @property WeatherModel $WeatherModel
  * @property CI_Input $input
  * @property CI_Form_validation $form_validation
  * @property CI_DB $db

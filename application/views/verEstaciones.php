@@ -28,10 +28,10 @@
 
                             <!-- Mostrar el clima -->
                             <?php if (isset($weather)): ?>
-                                <div class="weather-info">
-                                    <p><strong>Clima actual en Madrid:</strong></p>
+                                <div>
+                                    <h3>Clima actual</h3>
                                     <p>Temperatura: <?php echo $weather['main']['temp']; ?>°C</p>
-                                    <p>Condición: <?php echo $weather['weather'][0]['description']; ?></p>
+                                    <p>Condiciones: <?php echo $weather['weather'][0]['description']; ?></p>
                                 </div>
                             <?php endif; ?>
 
