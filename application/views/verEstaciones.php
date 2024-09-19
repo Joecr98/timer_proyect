@@ -29,11 +29,10 @@
 
                             <!-- Mostrar el clima -->
                             <?php if (isset($weather)): ?>
-                                <div>
-                                    <span class="material-symbols-outlined">partly_cloudy_day</span>
-                                    <p>Temperatura: <?php echo $weather['main']['temp']; ?>°C</p>
-                                    <p>Condiciones: <?php echo $weather['weather'][0]['description']; ?></p>
-                                    <span class="material-symbols-outlined">horizontal_rule</span>
+                                <div id="card-clima">
+                                    <p class="text-card-clima"><span class="material-symbols-outlined"> thermostat</span> <?php echo $weather['main']['temp']; ?>°C ‎ ‎ ‎ ‎ 
+                                        <span class="material-symbols-outlined">partly_cloudy_day</span> <?php echo $weather['weather'][0]['description']; ?>
+                                    </p>
                                 </div>
                             <?php endif; ?>
 
