@@ -21,7 +21,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?php echo base_url('UsuariosController/listarUsuarios'); ?>">
+                    <a class="nav-link" href="<?php echo base_url('UsuariosController/listaUsuarios'); ?>">
                         <i class="fas fa-users"></i> Gestionar Usuarios
                     </a>
                 </li>
