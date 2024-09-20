@@ -16,20 +16,23 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                <a class="nav-link" href="<?php echo base_url('UsuariosController/logout'); ?>">
-                    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
-                <a class="nav-link" href="<?php echo base_url('EquiposController/listarNotificaciones'); ?>">
-                    <i class="fas fa-bell"></i> Notificaciones personalizadas
-                </a>
-            </li>
-                <li class="nav-item">
                     <a class="nav-link" href="<?php echo base_url('EquiposController/listarHistorial'); ?>">
                         <i class="fas fa-history"></i> Historial
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-link" href="<?php echo base_url('EquiposController/listarNotificaciones'); ?>">
+                        <i class="fas fa-bell"></i> Notificaciones personalizadas
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="<?php echo base_url('UsuariosController/listaUsuarios'); ?>">
                         <i class="fas fa-users"></i> Gestionar Usuarios
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?php echo base_url('UsuariosController/logout'); ?>">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar sesión
                     </a>
                 </li>
                 <!-- Agrega más enlaces aquí según sea necesario para el administrador -->
@@ -40,13 +43,16 @@
                         <i class="fas fa-list"></i> Lista de Equipos
                     </a>
                 </li>
+                <li>
+                    <a class="nav-link" href="<?php echo base_url('EquiposController/listarNotificaciones'); ?>">
+                        <i class="fas fa-bell"></i> Notificaciones personalizadas
+                    </a>
+                </li>
                 <li class="nav-item">
-                <a class="nav-link" href="<?php echo base_url('UsuariosController/logout'); ?>">
-                    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
-                <a class="nav-link" href="<?php echo base_url('EquiposController/listarNotificaciones'); ?>">
-                    <i class="fas fa-bell"></i> Notificaciones personalizadas
-                </a>
-            </li>
+                    <a class="nav-link" href="<?php echo base_url('UsuariosController/logout'); ?>">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                    </a>
+                </li>
             <?php endif; ?>
             <!-- Opción de cerrar sesión disponible para ambos roles -->
         </ul>
