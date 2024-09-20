@@ -29,7 +29,7 @@
                 <select class="custom-select" id="station-select">
                     <option selected disabled>Seleccionar estación...</option>
                     <?php foreach ($equipos as $index => $equipo) : ?>
-                    <option value="<?php echo $equipo->idEquipo; ?>"><?php echo $equipo->nombre; ?></option>
+                        <option value="<?php echo $equipo->idEquipo; ?>"><?php echo $equipo->nombre; ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -38,32 +38,21 @@
         <!-- Contenedor de las estaciones -->
         <div class="row" id="sortable-estaciones">
             <?php foreach ($equipos as $index => $equipo) : ?>
-            <div class="col-md-4 mb-4 <?php echo $equipo->estado == 0 ? 'inactiva' : ''; ?> station"
-                data-id="<?php echo $equipo->idEquipo; ?>" data-index="<?php echo $index; ?>">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"><?php echo $equipo->nombre; ?></h5>
-                        <p class="card-text">Descripción: <?php echo $equipo->descripcion; ?></p>
-                        <p class="card-text">Estado: <span
-                                class="<?php echo $equipo->estado == 1 ? 'estado-activa' : 'estado-inactiva'; ?>">
-                                <?php echo $equipo->estado == 1 ? 'activa' : 'inactiva'; ?>
-                            </span></p>
+                <div class="col-md-4 mb-4 <?php echo $equipo->estado == 0 ? 'inactiva' : ''; ?> station"
+                    data-id="<?php echo $equipo->idEquipo; ?>" data-index="<?php echo $index; ?>">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><?php echo $equipo->nombre; ?></h5>
+                            <p class="card-text">Descripción: <?php echo $equipo->descripcion; ?></p>
+                            <p class="card-text">Estado: <span
+                                    class="<?php echo $equipo->estado == 1 ? 'estado-activa' : 'estado-inactiva'; ?>">
+                                    <?php echo $equipo->estado == 1 ? 'activa' : 'inactiva'; ?>
+                                </span></p>
 
-<<<<<<< HEAD
-                        <div class="btn-group d-flex justify-content-center">
-                            <button class="btn btn-add-time btn-sm" data-action="add-time"
-                                data-index="<?php echo $index; ?>">Iniciar tiempo añadido</button>
-                            <button class="btn btn-free-time btn-sm" data-action="free-time"
-                                data-index="<?php echo $index; ?>">Iniciar tiempo libre</button>
-                        </div>
-                        <div class="timer-display mt-3" data-index="<?php echo $index; ?>">
-                            <span class="horas">00</span>:<span class="minutos">00</span>:<span class="segundos">00</span>
-                        </div>
-=======
                             <!-- Mostrar el clima -->
                             <?php if (isset($weather)): ?>
                                 <div id="card-clima">
-                                    <p class="text-card-clima"><span class="material-symbols-outlined"> thermostat</span> <?php echo $weather['main']['temp']; ?>°C ‎ ‎ ‎ ‎ 
+                                    <p class="text-card-clima"><span class="material-symbols-outlined"> thermostat</span> <?php echo $weather['main']['temp']; ?>°C ‎ ‎ ‎ ‎
                                         <span class="material-symbols-outlined">partly_cloudy_day</span> <?php echo $weather['weather'][0]['description']; ?>
                                     </p>
                                 </div>
@@ -76,31 +65,30 @@
                             <div class="timer-display mt-3" data-index="<?php echo $index; ?>">
                                 <span class="horas">00</span>:<span class="minutos">00</span>:<span class="segundos">00</span>
                             </div>
->>>>>>> 21c88c2b2efdd250c95514ec57f0d4cca5a72dbe
 
-                        <div class="time-inputs">
-                            <input type="number" class="hours-input" placeholder="Horas:" min="0" max="99"
-                                data-index="<?php echo $index; ?>">
-                            <input type="number" class="minutes-input" placeholder="Mins:" min="0" max="59"
-                                data-index="<?php echo $index; ?>">
-                            <button class="btn-load-time" data-index="<?php echo $index; ?>"><i class="fas fa-check"></i></button>
-                        </div>
+                            <div class="time-inputs">
+                                <input type="number" class="hours-input" placeholder="Horas:" min="0" max="99"
+                                    data-index="<?php echo $index; ?>">
+                                <input type="number" class="minutes-input" placeholder="Mins:" min="0" max="59"
+                                    data-index="<?php echo $index; ?>">
+                                <button class="btn-load-time" data-index="<?php echo $index; ?>"><i class="fas fa-check"></i></button>
+                            </div>
 
-                        <div class="time-controls">
-                            <button data-time="900" data-index="<?php echo $index; ?>">+15</button>
-                            <button data-time="1800" data-index="<?php echo $index; ?>">+30</button>
-                            <button data-time="3600" data-index="<?php echo $index; ?>">+60</button>
-                        </div>
+                            <div class="time-controls">
+                                <button data-time="900" data-index="<?php echo $index; ?>">+15</button>
+                                <button data-time="1800" data-index="<?php echo $index; ?>">+30</button>
+                                <button data-time="3600" data-index="<?php echo $index; ?>">+60</button>
+                            </div>
 
-                        <div class="btn-group d-flex justify-content-center mt-3">
-                            <button class="btn btn-pause btn-sm" data-action="pause"
-                                data-index="<?php echo $index; ?>">Pausar</button>
-                            <button class="btn btn-reset btn-sm" data-action="reset"
-                                data-index="<?php echo $index; ?>">Reiniciar</button>
+                            <div class="btn-group d-flex justify-content-center mt-3">
+                                <button class="btn btn-pause btn-sm" data-action="pause"
+                                    data-index="<?php echo $index; ?>">Pausar</button>
+                                <button class="btn btn-reset btn-sm" data-action="reset"
+                                    data-index="<?php echo $index; ?>">Reiniciar</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
             <?php endforeach; ?>
         </div>
     </div>
