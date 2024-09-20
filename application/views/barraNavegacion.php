@@ -16,6 +16,13 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                <a class="nav-link" href="<?php echo base_url('UsuariosController/logout'); ?>">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                <a class="nav-link" href="<?php echo base_url('EquiposController/listarNotificaciones'); ?>">
+                    <i class="fas fa-bell"></i> Notificaciones personalizadas
+                </a>
+            </li>
+                <li class="nav-item">
                     <a class="nav-link" href="<?php echo base_url('EquiposController/listarHistorial'); ?>">
                         <i class="fas fa-history"></i> Historial
                     </a>
@@ -33,13 +40,15 @@
                         <i class="fas fa-list"></i> Lista de Equipos
                     </a>
                 </li>
-            <?php endif; ?>
-            <!-- Opción de cerrar sesión disponible para ambos roles -->
-            <li class="nav-item">
+                <li class="nav-item">
                 <a class="nav-link" href="<?php echo base_url('UsuariosController/logout'); ?>">
                     <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                <a class="nav-link" href="<?php echo base_url('EquiposController/listarNotificaciones'); ?>">
+                    <i class="fas fa-bell"></i> Notificaciones personalizadas
                 </a>
             </li>
+            <?php endif; ?>
+            <!-- Opción de cerrar sesión disponible para ambos roles -->
         </ul>
     </div>
 </nav>

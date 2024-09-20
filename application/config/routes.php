@@ -71,3 +71,4 @@ $route['historial'] = 'EquiposController/listarHistorial';
 
 // Ruta para el dashboard (asumiendo que quieres crear una página de inicio después del login)
 $route['dashboard'] = 'DashboardController/index';
+$route['obtenerNotificaciones'] = 'EquiposController/obtenerNotificaciones';

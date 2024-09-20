@@ -75,12 +75,11 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'port' => '3307',
-	'username' => 'root',
-	'password' => '123.',
-	'database' => 'bdtimer',
-	'dbdriver' => 'mysqli',
+	'hostname' => 'localhost:3316', //aquí tu puerto despues de 'localhost:' Ejemplo: 'localhost:3316'
+	'username' => '', //aqui tu usuario de tu base de datos. Ejemplo: 'root'
+	'password' => '', //aqui tu clave de tu base de datos. Ejemplo: 'Test12345.'
+	'database' => '', //aquí el nombre de tu base de datos. Ejemplo: 'bdtimer'
+	'dbdriver' => 'mysqli', //si usas otro driver de base de datos, debes cambiar esto
 	'dbprefix' => '',
 	'pconnect' => FALSE,
 	'db_debug' => (ENVIRONMENT !== 'production'),

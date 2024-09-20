@@ -3,6 +3,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @property EquiposModel $EquiposModel
+ * @property HistorialModel $HistorialModel
+ * @property NotificacionesModel $NotificacionesModel
+ * @property WeatherModel $WeatherModel
  * @property CI_Input $input
  * @property CI_Form_validation $form_validation
  * @property CI_DB $db
@@ -16,11 +19,17 @@ class EquiposController extends CI_Controller
 		parent::__construct();
 		$this->load->helper('form');
 		$this->load->model('EquiposModel');
-		$this->load->library('session'); // Carga la librería de sesión
+		$this->load->model('WeatherModel');
+		$this->load->model('HistorialModel');
+		$this->load->model('NotificacionesModel');
+		$this->load->library('session');
 	}
 
 	public function index()
 	{
+		// obtiene datos del clima de la ciudad especificada
+		$data['weather'] = $this->WeatherModel->get_weather('14.2719', '-89.8791');
+
 		$data['equipos'] = $this->EquiposModel->mostrarEquipos();
 		$this->load->view('verEstaciones', $data);
 	}
@@ -38,7 +47,6 @@ class EquiposController extends CI_Controller
 			'estado' => $this->input->post('estado')
 		];
 
-		// Intenta crear el equipo
 		if ($this->EquiposModel->crearEquipo($equipo)) {
 			$this->session->set_flashdata('equipo_creado', true);
 			redirect('EquiposController/crearEstacion');
@@ -50,14 +58,8 @@ class EquiposController extends CI_Controller
 
 	public function actualizarEstacion($idEquipo)
 	{
-		$datoEquipo['equipo'] = $this->EquiposModel->obtenerEquipo($idEquipo);
+		$datoEquipo['equipo'] = $this->EquiposModel->obtenerEquipobyId($idEquipo);
 		$this->load->view('actualizarEstacion', $datoEquipo);
-	}
-
-	public function eliminarEquipo($idEquipo)
-	{
-		$this->EquiposModel->eliminarEquipo($idEquipo);
-		redirect('EquiposController/listarEstaciones');
 	}
 
 	public function editarEquipo($idEquipo)
@@ -72,6 +74,13 @@ class EquiposController extends CI_Controller
 		redirect('EquiposController/listarEstaciones');
 	}
 
+	public function eliminarEquipo($idEquipo)
+	{
+		$this->EquiposModel->eliminarEquipo($idEquipo);
+		redirect('EquiposController/listarEstaciones');
+	}
+
+
 	public function listarEstaciones()
 	{
 		$datosEquipos['equipos'] = $this->EquiposModel->mostrarEquipos();
@@ -84,14 +93,13 @@ class EquiposController extends CI_Controller
 		$this->load->view('listaEstacionesInactivas', $datosEquipos);
 	}
 
+
 	public function listarHistorial()
 	{
-		$datosHistoriales['historiales'] = $this->EquiposModel->mostrarHistorial();
+		$datosHistoriales['historiales'] = $this->HistorialModel->mostrarHistorial();
 		$datosEquipos['equipos'] = $this->EquiposModel->mostrarEquipos(); // Obtener los nombres de equipos
 		$this->load->view('historial', array_merge($datosHistoriales, $datosEquipos)); // Enviar ambos arrays a la vista
 	}
-
-
 
 	public function iniciarTiempo()
 	{
@@ -112,7 +120,7 @@ class EquiposController extends CI_Controller
 
 		// Intentar insertar el historial y manejar posibles errores
 		try {
-			$idHistorial = $this->EquiposModel->iniciarHistorial($idEquipo, $inicioTiempo, $finalTiempo);
+			$idHistorial = $this->HistorialModel->iniciarHistorial($idEquipo, $inicioTiempo, $finalTiempo);
 
 			// Devolver el ID del historial como respuesta
 			$response = array('idHistorial' => $idHistorial);
@@ -133,7 +141,7 @@ class EquiposController extends CI_Controller
 		if ($idHistorial) {
 			$finTiempo = date('Y-m-d H:i:s'); // Obtener la fecha y hora actual
 			try {
-				$this->EquiposModel->detenerHistorial($idHistorial, $finTiempo);
+				$this->HistorialModel->detenerHistorial($idHistorial, $finTiempo);
 				echo json_encode(array('status' => 'success'));
 			} catch (Exception $e) {
 				echo json_encode(array('status' => 'error', 'message' => 'Error al detener el tiempo: ' . $e->getMessage()));
@@ -145,13 +153,107 @@ class EquiposController extends CI_Controller
 
 	public function obtenerEstadisticas()
 	{
-		$estacionMasRegistros = $this->EquiposModel->estacionConMasRegistros();
-		$estacionMenosUsada = $this->EquiposModel->estacionMenosUsada();
+		$estacionMasRegistros = $this->HistorialModel->estacionConMasRegistros();
+		$estacionMenosUsada = $this->HistorialModel->estacionMenosUsada();
 
 		$data = [
 			'estacionMasRegistros' => $estacionMasRegistros ? $estacionMasRegistros : (object) ['nombreEstacion' => 'Desconocida', 'cantidad' => 0],
 			'estacionMenosUsada' => $estacionMenosUsada ? $estacionMenosUsada : (object) ['nombreEstacion' => 'Desconocida', 'cantidad' => 0]
 		];
 		echo json_encode($data);
+	}
+
+	public function listarNotificaciones()
+	{
+		$datosNotificaciones['notificaciones'] = $this->NotificacionesModel->mostrarNotificaciones();
+		$datosEquipos['equipos'] = $this->EquiposModel->mostrarEquipos(); // Obtener los nombres de equipos
+		$this->load->view('listaNotificaciones', array_merge($datosNotificaciones, $datosEquipos)); // Enviar ambos arrays a la vista;
+	}
+
+	public function obtenerNotificaciones()
+	{
+		$notificaciones = $this->NotificacionesModel->obtenerNotificaciones(); // Supongamos que devuelve un array de notificaciones
+		echo json_encode($notificaciones);
+	}
+
+	public function cargarVistaCrearNotificaciones()
+	{
+		$datosEquipos['equipos'] = $this->EquiposModel->mostrarEquipos(); // Obtener los nombres de equipos
+		$this->load->view('crearNotificacion', $datosEquipos);
+	}
+
+	public function crearNotificacion()
+	{
+		$notificacion = [
+			'nombreNotificacion' => $this->input->post('name'),
+			'iconoNotificacion' => trim($this->input->post('icon')) ?: null,
+			'tituloNotificacion' => trim($this->input->post('title')) ?: null,
+			'textoNotificacion' => trim($this->input->post('text')) ?: null,
+			'colorBotonNotificacion' => $this->input->post('colorButton'),
+			'idEquipoNotificacion' => trim($this->input->post('estacionFilter')) ?: null,
+			'tiempoConfiguradoNotificacion' => $this->input->post('configureTime'),
+			'imagenUrlNotificacion' => trim($this->input->post('imageUrl')) ?: null,
+			'anchoImagenNotificacion' => trim($this->input->post('imageWidth')) ?: null,
+			'largoImagenNotificacion' => trim($this->input->post('imageHeight')) ?: null,
+			'nombreAlternoImagenNotificacion' => trim($this->input->post('altName')) ?: null,
+			'imagenUrlBackgroundNotificacion' => trim($this->input->post('BackgroundImageUrl')) ?: null,
+			'colorBackgroundNotificacion' => $this->input->post('BackgroundColor'),
+			'colorBackdropNotificacion' => $this->input->post('BackdropColor'),
+		];
+
+		// Intenta crear la notificación
+		if ($this->NotificacionesModel->crearNotificacion($notificacion)) {
+			$this->session->set_flashdata('notificacion_creada', true);
+			redirect('EquiposController/cargarVistaCrearNotificaciones');
+		} else {
+			$this->session->set_flashdata('error_notificacion', true);
+			redirect('EquiposController/cargarVistaCrearNotificaciones');
+		}
+	}
+
+	public function vistaActualizarNotificacion($idNotificacion)
+	{
+		$datoNotificacion['notificacion'] = $this->NotificacionesModel->obtenerNotificacionbyId($idNotificacion);
+		$datosEquipos['equipos'] = $this->EquiposModel->mostrarEquipos(); // Obtener los nombres de equipos
+		$this->load->view('actualizarNotificacion', array_merge($datoNotificacion, $datosEquipos));
+	}
+
+	public function editarNotificacion($idNotificacion)
+	{
+		$notificacion = [
+			'nombreNotificacion' => $this->input->post('name'),
+			'iconoNotificacion' => trim($this->input->post('icon')) ?: null,
+			'tituloNotificacion' => trim($this->input->post('title')) ?: null,
+			'textoNotificacion' => trim($this->input->post('text')) ?: null,
+			'colorBotonNotificacion' => $this->input->post('colorButton'),
+			'idEquipoNotificacion' => trim($this->input->post('estacionFilter')) ?: null,
+			'tiempoConfiguradoNotificacion' => $this->input->post('configureTime'),
+			'imagenUrlNotificacion' => trim($this->input->post('imageUrl')) ?: null,
+			'anchoImagenNotificacion' => trim($this->input->post('imageWidth')) ?: null,
+			'largoImagenNotificacion' => trim($this->input->post('imageHeight')) ?: null,
+			'nombreAlternoImagenNotificacion' => trim($this->input->post('altName')) ?: null,
+			'imagenUrlBackgroundNotificacion' => trim($this->input->post('BackgroundImageUrl')) ?: null,
+			'colorBackgroundNotificacion' => $this->input->post('BackgroundColor'),
+			'colorBackdropNotificacion' => $this->input->post('BackdropColor'),
+		];
+
+		if ($this->NotificacionesModel->editarNotificacion($notificacion, $idNotificacion)) {
+			$this->session->set_flashdata('notificacion_actualizada', true);
+			redirect('EquiposController/listarNotificaciones');
+		} else {
+			$this->session->set_flashdata('error_actualizarNotificacion', true);
+			redirect('EquiposController/vistaActualizarNotificacion/' . $idNotificacion);
+		}
+	}
+
+	public function eliminarNotificacion($idNotificacion)
+	{
+		if ($this->NotificacionesModel->eliminarNotificacion($idNotificacion)) {
+			$this->session->set_flashdata('notificacion_eliminada', true);
+			redirect('EquiposController/listarNotificaciones');
+		} else {
+			$this->session->set_flashdata('error_eliminarNotificacion', true);
+			redirect('EquiposController/listarNotificaciones');
+		}
 	}
 }

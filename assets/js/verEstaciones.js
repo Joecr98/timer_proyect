@@ -1,7 +1,138 @@
         $(document).ready(function() {
             let estations = {};
+        // Función para obtener notificaciones del backend
+        function obtenerNotificaciones() {
+                // console.log('Obteniendo notificaciones...'); // Verifica si la función se llama
+                return axios.get('EquiposController/obtenerNotificaciones')
+                    .then(response => {
+                        // console.log('Notificaciones obtenidas:', response.data); // Verifica la respuesta
+                        return response.data;
+                    })
+                    .catch(error => {
+                        // console.error('Error al obtener notificaciones:', error);
+                        return [];
+                    });
+            }
+            // Convertir el tiempo configurado a segundos
+            function convertirATotalSegundos(tiempo) {
+                if (!tiempo) {
+                    // console.warn('Tiempo inválido:', tiempo);
+                    return null; // O algún valor por defecto
+                }
+                    const totalSegundos = tiempo * 60;
+                    // console.log(`Tiempo en minutos "${tiempo}" convertido a segundos:`, totalSegundos);
+                    return totalSegundos;
+            }
 
-            function initEstation(index) {
+            function verificarNotificaciones(totalTime, index) {
+                // console.log('Verificando notificaciones...');
+                obtenerNotificaciones().then(notificaciones => {
+                    // console.log('Procesando notificaciones:', notificaciones);
+                    notificaciones.forEach(notificacion => {
+                        const tiempoConfiguradoSegundos = convertirATotalSegundos(notificacion.tiempoConfiguradoNotificacion);
+                        if (tiempoConfiguradoSegundos === null) {
+                            // console.warn('No se pudo procesar el tiempo para esta notificación:', notificacion);
+                            return; // Saltar esta notificación si no se pudo convertir el tiempo
+                        }
+                        const idEstacionNotificacion = notificacion.idEquipoNotificacion; // Puede ser null
+                        const idEquipo = $(`.station[data-index="${index}"]`).data('id'); // Obtener el idEquipo asociado a este índice
+                        if (totalTime === tiempoConfiguradoSegundos) {
+                            // console.log(idEquipo);
+                            // console.log(idEstacionNotificacion);
+                            // console.log(`Coincidencia de tiempo en estación ${index + 1}.`);
+                            if (idEstacionNotificacion === null) {
+                                // console.log(`Notificación para la estación ${index + 1} disparada.`);
+                                mostrarAlerta(notificacion);
+                            } else if (parseInt(idEstacionNotificacion) === parseInt(idEquipo)) {
+                                // console.log(`Notificación para la estación ${index + 1} disparada.`);
+                                mostrarAlerta(notificacion);
+                                // console.log(`Notificación no aplica para la estación ${index + 1}.`);
+                            }
+                        } else {
+                            // console.log(`No hay coincidencia de tiempo en estación ${index + 1}.`);
+                        }
+                    });
+                });
+            }
+
+        
+            // Función para mostrar la alerta
+            function mostrarAlerta(notificacion) {
+                let configAlerta = {
+                    showConfirmButton: true
+                };
+
+                if (notificacion.tituloNotificacion && notificacion.tituloNotificacion !== 'null') {
+                    configAlerta.title = notificacion.tituloNotificacion;
+                }
+
+                if (notificacion.textoNotificacion && notificacion.textoNotificacion !== 'null') {
+                    configAlerta.text = notificacion.textoNotificacion;
+                }
+
+                if (notificacion.iconoNotificacion && notificacion.iconoNotificacion !== 'null') {
+                    configAlerta.icon = notificacion.iconoNotificacion;
+                }
+
+                if (notificacion.imagenUrlNotificacion && notificacion.imagenUrlNotificacion !== 'null') {
+                    configAlerta.imageUrl = notificacion.imagenUrlNotificacion;
+                }
+
+                if (notificacion.anchoImagenNotificacion && notificacion.anchoImagenNotificacion !== 'null') {
+                    configAlerta.imageWidth = notificacion.anchoImagenNotificacion;
+                }
+
+                if (notificacion.largoImagenNotificacion && notificacion.largoImagenNotificacion !== 'null') {
+                    configAlerta.imageHeight = notificacion.largoImagenNotificacion;
+                }
+
+                if (notificacion.nombreAlternoImagenNotificacion && notificacion.nombreAlternoImagenNotificacion !== 'null') {
+                    configAlerta.imageAlt = notificacion.nombreAlternoImagenNotificacion;
+                }
+
+                if (notificacion.colorBackgroundNotificacion && notificacion.colorBackgroundNotificacion !== 'null') {
+                    configAlerta.background = notificacion.colorBackgroundNotificacion;
+                }
+
+                if (notificacion.imagenUrlBackgroundNotificacion && notificacion.imagenUrlBackgroundNotificacion !== 'null') {
+                    configAlerta.background = `
+                    url(${notificacion.imagenUrlBackgroundNotificacion}) no-repeat center center / cover
+                `;
+                }
+
+                if (notificacion.colorBackdropNotificacion && notificacion.colorBackdropNotificacion !== 'null') {
+                    configAlerta.backdrop = hexToRgb(notificacion.colorBackdropNotificacion);
+                }
+
+                if (notificacion.colorBotonNotificacion && notificacion.colorBotonNotificacion !== 'null') {
+                    configAlerta.confirmButtonColor = notificacion.colorBotonNotificacion;
+                }
+
+                Swal.fire(configAlerta);
+                const alertSound = document.getElementById('alert-sound');
+                alertSound.play();
+            }
+
+            function hexToRgb(hex) {
+                // Elimina el código de color '#' si existe
+                hex = hex.replace(/^#/, '');
+    
+                // Convierte los valores hexadecimales a números decimales
+                if (hex.length === 3) {
+                    hex = hex.split('');
+                    hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+                }
+    
+                // Convierte a RGB
+                const r = parseInt(hex.substring(0, 2), 16);
+                const g = parseInt(hex.substring(2, 4), 16);
+                const b = parseInt(hex.substring(4, 6), 16);
+    
+                // Retorna el color en formato rgba con opacidad por defecto de 0.4
+                return `rgba(${r}, ${g}, ${b}, 0.4)`;
+            }
+        
+                function initEstation(index) {
                 let hour = 0,
                     min = 0,
                     sec = 0,
@@ -167,6 +298,7 @@
                         sec = totalTime % 60;
                         updateDisplay();
                         saveTimer();
+                        verificarNotificaciones(totalTime, index);
                     }, 1000);
                 
                     running = true;
@@ -213,8 +345,10 @@
                                 hour += 1;
                             }
                         }
+                        totalTime++;
                         updateDisplay();
                         saveTimer();
+                        verificarNotificaciones(totalTime, index);
                     }, 1000);
                     running = true;
                     saveTimer();
