@@ -156,3 +156,19 @@ input::placeholder {
     opacity: 1;
     /* Asegúrate de que la opacidad esté al 100% */
 }
+
+  /* Estilo para indicar que la estación está bloqueada */
+        .station.locked {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .btn-lock,
+        .btn-unlock {
+            margin: 5px;
+        }
+
+        .dropdown-station {
+            margin-left: 10px;
+        }
+
