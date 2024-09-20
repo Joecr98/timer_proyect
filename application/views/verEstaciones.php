@@ -11,6 +11,7 @@
         crossorigin="anonymous">
     <link rel="stylesheet" href="<?= base_url('assets/css/globalEstilos.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/verEstaciones.css') ?>">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@40,400,0,0" />
 </head>
 
 <body>
@@ -48,6 +49,7 @@
                                 <?php echo $equipo->estado == 1 ? 'activa' : 'inactiva'; ?>
                             </span></p>
 
+<<<<<<< HEAD
                         <div class="btn-group d-flex justify-content-center">
                             <button class="btn btn-add-time btn-sm" data-action="add-time"
                                 data-index="<?php echo $index; ?>">Iniciar tiempo añadido</button>
@@ -57,6 +59,24 @@
                         <div class="timer-display mt-3" data-index="<?php echo $index; ?>">
                             <span class="horas">00</span>:<span class="minutos">00</span>:<span class="segundos">00</span>
                         </div>
+=======
+                            <!-- Mostrar el clima -->
+                            <?php if (isset($weather)): ?>
+                                <div id="card-clima">
+                                    <p class="text-card-clima"><span class="material-symbols-outlined"> thermostat</span> <?php echo $weather['main']['temp']; ?>°C ‎ ‎ ‎ ‎ 
+                                        <span class="material-symbols-outlined">partly_cloudy_day</span> <?php echo $weather['weather'][0]['description']; ?>
+                                    </p>
+                                </div>
+                            <?php endif; ?>
+
+                            <div class="btn-group d-flex justify-content-center">
+                                <button class="btn btn-add-time btn-sm" data-action="add-time" data-index="<?php echo $index; ?>">Iniciar tiempo añadido</button>
+                                <button class="btn btn-free-time btn-sm" data-action="free-time" data-index="<?php echo $index; ?>">Iniciar tiempo libre</button>
+                            </div>
+                            <div class="timer-display mt-3" data-index="<?php echo $index; ?>">
+                                <span class="horas">00</span>:<span class="minutos">00</span>:<span class="segundos">00</span>
+                            </div>
+>>>>>>> 21c88c2b2efdd250c95514ec57f0d4cca5a72dbe
 
                         <div class="time-inputs">
                             <input type="number" class="hours-input" placeholder="Horas:" min="0" max="99"
