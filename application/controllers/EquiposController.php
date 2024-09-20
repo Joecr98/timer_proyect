@@ -3,6 +3,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @property EquiposModel $EquiposModel
+ * @property HistorialModel $HistorialModel
+ * @property NotificacionesModel $NotificacionesModel
  * @property WeatherModel $WeatherModel
  * @property CI_Input $input
  * @property CI_Form_validation $form_validation
@@ -17,9 +19,10 @@ class EquiposController extends CI_Controller
 		parent::__construct();
 		$this->load->helper('form');
 		$this->load->model('EquiposModel');
-		$this->load->model('WeatherModel'); // Carga modelo de clima
-		$this->load->library('session'); // Carga la librería de sesión
-
+		$this->load->model('WeatherModel');
+		$this->load->model('HistorialModel');
+		$this->load->model('NotificacionesModel');
+		$this->load->library('session');
 	}
 
 	public function index()
@@ -44,7 +47,6 @@ class EquiposController extends CI_Controller
 			'estado' => $this->input->post('estado')
 		];
 
-		// Intenta crear el equipo
 		if ($this->EquiposModel->crearEquipo($equipo)) {
 			$this->session->set_flashdata('equipo_creado', true);
 			redirect('EquiposController/crearEstacion');
@@ -56,7 +58,7 @@ class EquiposController extends CI_Controller
 
 	public function actualizarEstacion($idEquipo)
 	{
-		$datoEquipo['equipo'] = $this->EquiposModel->obtenerEquipo($idEquipo);
+		$datoEquipo['equipo'] = $this->EquiposModel->obtenerEquipobyId($idEquipo);
 		$this->load->view('actualizarEstacion', $datoEquipo);
 	}
 
@@ -94,7 +96,7 @@ class EquiposController extends CI_Controller
 
 	public function listarHistorial()
 	{
-		$datosHistoriales['historiales'] = $this->EquiposModel->mostrarHistorial();
+		$datosHistoriales['historiales'] = $this->HistorialModel->mostrarHistorial();
 		$datosEquipos['equipos'] = $this->EquiposModel->mostrarEquipos(); // Obtener los nombres de equipos
 		$this->load->view('historial', array_merge($datosHistoriales, $datosEquipos)); // Enviar ambos arrays a la vista
 	}
@@ -118,7 +120,7 @@ class EquiposController extends CI_Controller
 
 		// Intentar insertar el historial y manejar posibles errores
 		try {
-			$idHistorial = $this->EquiposModel->iniciarHistorial($idEquipo, $inicioTiempo, $finalTiempo);
+			$idHistorial = $this->HistorialModel->iniciarHistorial($idEquipo, $inicioTiempo, $finalTiempo);
 
 			// Devolver el ID del historial como respuesta
 			$response = array('idHistorial' => $idHistorial);
@@ -139,7 +141,7 @@ class EquiposController extends CI_Controller
 		if ($idHistorial) {
 			$finTiempo = date('Y-m-d H:i:s'); // Obtener la fecha y hora actual
 			try {
-				$this->EquiposModel->detenerHistorial($idHistorial, $finTiempo);
+				$this->HistorialModel->detenerHistorial($idHistorial, $finTiempo);
 				echo json_encode(array('status' => 'success'));
 			} catch (Exception $e) {
 				echo json_encode(array('status' => 'error', 'message' => 'Error al detener el tiempo: ' . $e->getMessage()));
@@ -151,8 +153,8 @@ class EquiposController extends CI_Controller
 
 	public function obtenerEstadisticas()
 	{
-		$estacionMasRegistros = $this->EquiposModel->estacionConMasRegistros();
-		$estacionMenosUsada = $this->EquiposModel->estacionMenosUsada();
+		$estacionMasRegistros = $this->HistorialModel->estacionConMasRegistros();
+		$estacionMenosUsada = $this->HistorialModel->estacionMenosUsada();
 
 		$data = [
 			'estacionMasRegistros' => $estacionMasRegistros ? $estacionMasRegistros : (object) ['nombreEstacion' => 'Desconocida', 'cantidad' => 0],
@@ -163,14 +165,14 @@ class EquiposController extends CI_Controller
 
 	public function listarNotificaciones()
 	{
-		$datosNotificaciones['notificaciones'] = $this->EquiposModel->mostrarNotificaciones();
+		$datosNotificaciones['notificaciones'] = $this->NotificacionesModel->mostrarNotificaciones();
 		$datosEquipos['equipos'] = $this->EquiposModel->mostrarEquipos(); // Obtener los nombres de equipos
 		$this->load->view('listaNotificaciones', array_merge($datosNotificaciones, $datosEquipos)); // Enviar ambos arrays a la vista;
 	}
 
 	public function obtenerNotificaciones()
 	{
-		$notificaciones = $this->EquiposModel->obtenerNotificaciones(); // Supongamos que devuelve un array de notificaciones
+		$notificaciones = $this->NotificacionesModel->obtenerNotificaciones(); // Supongamos que devuelve un array de notificaciones
 		echo json_encode($notificaciones);
 	}
 
@@ -200,7 +202,7 @@ class EquiposController extends CI_Controller
 		];
 
 		// Intenta crear la notificación
-		if ($this->EquiposModel->crearNotificacion($notificacion)) {
+		if ($this->NotificacionesModel->crearNotificacion($notificacion)) {
 			$this->session->set_flashdata('notificacion_creada', true);
 			redirect('EquiposController/cargarVistaCrearNotificaciones');
 		} else {
@@ -211,7 +213,7 @@ class EquiposController extends CI_Controller
 
 	public function vistaActualizarNotificacion($idNotificacion)
 	{
-		$datoNotificacion['notificacion'] = $this->EquiposModel->obtenerNotificacionbyId($idNotificacion);
+		$datoNotificacion['notificacion'] = $this->NotificacionesModel->obtenerNotificacionbyId($idNotificacion);
 		$datosEquipos['equipos'] = $this->EquiposModel->mostrarEquipos(); // Obtener los nombres de equipos
 		$this->load->view('actualizarNotificacion', array_merge($datoNotificacion, $datosEquipos));
 	}
@@ -235,7 +237,7 @@ class EquiposController extends CI_Controller
 			'colorBackdropNotificacion' => $this->input->post('BackdropColor'),
 		];
 
-		if ($this->EquiposModel->editarNotificacion($notificacion, $idNotificacion)) {
+		if ($this->NotificacionesModel->editarNotificacion($notificacion, $idNotificacion)) {
 			$this->session->set_flashdata('notificacion_actualizada', true);
 			redirect('EquiposController/listarNotificaciones');
 		} else {
@@ -246,7 +248,7 @@ class EquiposController extends CI_Controller
 
 	public function eliminarNotificacion($idNotificacion)
 	{
-		if ($this->EquiposModel->eliminarNotificacion($idNotificacion)) {
+		if ($this->NotificacionesModel->eliminarNotificacion($idNotificacion)) {
 			$this->session->set_flashdata('notificacion_eliminada', true);
 			redirect('EquiposController/listarNotificaciones');
 		} else {

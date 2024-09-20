@@ -15,7 +15,7 @@
     <?php $this->load->view('barraNavegacion'); ?>
     <div class="container">
         <div class="row mb-3">
-            <a href="<?php echo base_url('EquiposController/listarEstaciones'); ?>" class="btn btn-primary">Regresar a lista estaciones</a>
+            <a href="<?php echo base_url('EquiposController/listarEstaciones'); ?>" class="btn btn-primary">Regresa a lista de estaciones activas</a>
         </div>
         <div class="row">
             <div class="card col-12">

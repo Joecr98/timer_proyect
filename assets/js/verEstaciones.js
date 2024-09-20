@@ -1,6 +1,5 @@
         $(document).ready(function() {
             let estations = {};
-            let totalTimeEstaciones = {};
         // Función para obtener notificaciones del backend
         function obtenerNotificaciones() {
                 // console.log('Obteniendo notificaciones...'); // Verifica si la función se llama
@@ -138,7 +137,6 @@
                     min = 0,
                     sec = 0,
                     totalTime = 0;
-                    totalTimeEstaciones[index] = { totalTime };
                 let interval;
                 let running = false;
                 let paused = false;
